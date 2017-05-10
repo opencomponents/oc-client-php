@@ -22,7 +22,7 @@ class Client
 
         foreach ($components as $component) {
             $comp = new Component($component['name']);
-            $response = $this->httpClient->get($comp->getName());
+            $response = $this->httpClient->get('/' . $comp->getName());
             $renderedComponents[] = (string) $response->getBody();
         }
         return [
