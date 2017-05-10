@@ -1,0 +1,21 @@
+{
+    "name": "ciricihq/oc-client-php",
+    "description": "opentables/oc-client PHP implementation",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+      {
+        "name": "Cirici New Media",
+        "homepage": "http://cirici.com"
+      },
+      {
+        "name": "Genar Trias Ortiz",
+        "homepage": "http://genar.me",
+        "email": "genar@cirici.com"
+      }
+	],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6.1"
+    }
+}
