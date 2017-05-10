@@ -9,7 +9,7 @@ For a nodejs implementation check this [link][oc-client-node]. This library is h
 ## Install
 
 ```
-composer require ciricihq/oc-client-php
+composer require opencomponents/oc-client-php
 ```
 
 ## Running tests

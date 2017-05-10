@@ -1,6 +1,6 @@
 {
-    "name": "ciricihq/oc-client-php",
-    "description": "opentables/oc-client PHP implementation",
+    "name": "opencomponents/oc-client-php",
+    "description": "oc-client PHP implementation",
     "type": "library",
     "license": "GPL-3.0",
     "scripts": {
