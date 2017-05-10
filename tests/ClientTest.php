@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 use OpenComponents\Client;
+use GuzzleHttp\Client as GuzzleClient;
 
 class ClientTest extends TestCase
 {
@@ -26,7 +27,7 @@ class ClientTest extends TestCase
         );
     }
 
-    public function renderComponentsTest()
+    public function testRenderComponents()
     {
         // Instance initialization
         $client = new Client([
@@ -39,6 +40,38 @@ class ClientTest extends TestCase
             ]
         ]);
 
-        $client->renderComponents();
+        $components = $client->renderComponents([
+            [
+                "name" => "hello"
+            ]
+        ]);
+
+        $this->assertNotNull($components);
+        $this->assertTrue(isset($components['errors']));
+        $this->assertTrue(is_array($components['errors']));
+        $this->assertTrue(isset($components['html']));
+        $this->assertTrue(is_array($components['html']));
+        $this->assertEquals(1, count($components['html']));
+
+        // Mocking http client
+        $httpClient = $this->mockingRenderComponentsClient();
+        $client->setHttpClient($httpClient);
+
+        $components = $client->renderComponents([
+            [
+                "name" => "hello"
+            ],
+            [
+                "name" => "world"
+            ]
+        ]);
+
+        $this->assertEquals(2, count($components['html']));
+
+    }
+
+    private function mockingRenderComponentsClient()
+    {
+        return new GuzzleClient();
     }
 }
