@@ -14,8 +14,13 @@ class Component
 
     private $render;
 
-    public function __construct($name, $version, $parameters, $container, $render)
-    {
+    public function __construct(
+        $name,
+        $version = '',
+        $parameters = [],
+        $container = false,
+        $render = ''
+    ) {
         $this->name = $name;
         $this->version = $version;
         $this->parameters = $parameters;
@@ -26,5 +31,10 @@ class Component
     public function getVersion()
     {
         return $this->version;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 }

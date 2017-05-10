@@ -3,7 +3,11 @@
 use PHPUnit\Framework\TestCase;
 
 use OpenComponents\Client;
+
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 
 class ClientTest extends TestCase
 {
@@ -40,9 +44,13 @@ class ClientTest extends TestCase
             ]
         ]);
 
+        // Mocking http client
+        $httpClient = $this->mockingRenderComponentsClient();
+        $client->setHttpClient($httpClient);
+
         $components = $client->renderComponents([
             [
-                "name" => "hello"
+                "name" => "oc-client"
             ]
         ]);
 
@@ -53,13 +61,9 @@ class ClientTest extends TestCase
         $this->assertTrue(is_array($components['html']));
         $this->assertEquals(1, count($components['html']));
 
-        // Mocking http client
-        $httpClient = $this->mockingRenderComponentsClient();
-        $client->setHttpClient($httpClient);
-
         $components = $client->renderComponents([
             [
-                "name" => "hello"
+                "name" => "oc-client"
             ],
             [
                 "name" => "world"
@@ -67,11 +71,22 @@ class ClientTest extends TestCase
         ]);
 
         $this->assertEquals(2, count($components['html']));
+        $this->assertRegexp('/script/', $components['html'][0]);
 
     }
 
     private function mockingRenderComponentsClient()
     {
-        return new GuzzleClient();
+        $componentsResponse = '<script src=\"//s3-eu-west-1.amazonaws.com/storage/components/oc-client/0.36.15/src/oc-client.min.js\" type=\"text/javascript\"></script>';
+        $mock = new MockHandler([
+            new Response(200, [], $componentsResponse),
+            new Response(200, [], $componentsResponse),
+            new Response(200, [], $componentsResponse)
+        ]);
+
+        $handler = HandlerStack::create($mock);
+        return new GuzzleClient([
+            'handler' => $handler
+        ]);
     }
 }

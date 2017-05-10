@@ -16,5 +16,6 @@ class ComponentTest extends TestCase
         );
 
         $this->assertEquals('1.2.3', $component->getVersion());
+        $this->assertEquals('hello-world', $component->getName());
     }
 }
