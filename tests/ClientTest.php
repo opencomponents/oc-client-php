@@ -72,12 +72,20 @@ class ClientTest extends TestCase
 
         $this->assertEquals(2, count($components['html']));
         $this->assertRegexp('/script/', $components['html'][0]);
-
     }
 
     private function mockingRenderComponentsClient()
     {
-        $componentsResponse = '<script src=\"//s3-eu-west-1.amazonaws.com/storage/components/oc-client/0.36.15/src/oc-client.min.js\" type=\"text/javascript\"></script>';
+        $componentsResponse = '{
+            "type": "oc-component",
+            "version": "0.36.15",
+            "requestVersion": "",
+            "name": "oc-client",
+            "renderMode": "rendered",
+            "href": "https://components.d.cirici.com/oc-client",
+            "html": "<script src=\"//s3-eu-west-1.amazonaws.com/somebucket/components/oc-client/0.36.15/src/oc-client.min.js\" type=\"text/javascript\"></script>"
+        }';
+
         $mock = new MockHandler([
             new Response(200, [], $componentsResponse),
             new Response(200, [], $componentsResponse),

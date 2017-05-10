@@ -22,8 +22,8 @@ class Client
 
         foreach ($components as $component) {
             $comp = new Component($component['name']);
-            $response = $this->httpClient->get('/' . $comp->getName());
-            $renderedComponents[] = (string) $response->getBody();
+            $response = $this->httpClient->get($comp->getName());
+            $renderedComponents[] = json_decode((string) $response->getBody())->html;
         }
         return [
             'html' => $renderedComponents,
