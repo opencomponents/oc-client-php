@@ -2,3 +2,6 @@
 
 namespace OpenComponents;
 
+class Client
+{
+}

@@ -2,6 +2,8 @@
 
 use PHPUnit\Framework\TestCase;
 
+use OpenComponents\Client;
+
 class ClientTest extends TestCase
 {
     public function testConstructor()

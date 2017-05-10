@@ -3,6 +3,9 @@
     "description": "opentables/oc-client PHP implementation",
     "type": "library",
     "license": "GPL-3.0",
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
     "authors": [
       {
         "name": "Cirici New Media",
@@ -14,6 +17,11 @@
         "email": "genar@cirici.com"
       }
 	],
+    "autoload": {
+        "psr-4": {
+            "OpenComponents\\": "src/"
+        }
+    },
     "require": {},
     "require-dev": {
         "phpunit/phpunit": "^6.1"
