@@ -4,7 +4,7 @@
 
 opentables/oc-client PHP implementation
 
-For a nodejs implementation check this link [go here][oc-client-node]. This library is heavily based on it.
+For a nodejs implementation check this [link][oc-client-node]. This library is heavily based on it.
 
 ## Install
 
