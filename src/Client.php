@@ -2,37 +2,52 @@
 
 namespace OpenComponents;
 
-use GuzzleHttp\Client as GuzzleClient;
 use OpenComponents\Model\Component;
+use OpenComponents\ComponentDataRetriever;
 
 class Client
 {
-    private $httpClient;
+    private $config;
+
+    private $componentDataRetriever;
 
     public function __construct($config)
     {
-        $this->httpClient = new GuzzleClient([
-            'base_uri' => $config['registries']['serverRendering']
-        ]);
+        $this->config = $config;
+
+        $this->setComponentDataRetriever(
+            new ComponentDataRetriever($config)
+        );
     }
 
+    /**
+     * renderComponents
+     *
+     * @param mixed $components
+     * @access public
+     * @return array
+     */
     public function renderComponents($components)
     {
-        $renderedComponents = [];
+        $renderedComponents = $this
+            ->componentDataRetriever
+            ->performRequest($components);
 
-        foreach ($components as $component) {
-            $comp = new Component($component['name']);
-            $response = $this->httpClient->get($comp->getName());
-            $renderedComponents[] = json_decode((string) $response->getBody())->html;
-        }
         return [
             'html' => $renderedComponents,
             'errors' => []
         ];
     }
 
-    public function setHttpClient(GuzzleClient $httpClient)
+    /**
+     * setComponentDataRetriever
+     *
+     * @param ComponentDataRetriever $dataRetriever
+     * @access public
+     * @return void
+     */
+    public function setComponentDataRetriever(ComponentDataRetriever $dataRetriever)
     {
-        $this->httpClient = $httpClient;
+        $this->componentDataRetriever = $dataRetriever;
     }
 }
