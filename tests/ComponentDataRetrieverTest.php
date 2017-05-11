@@ -120,6 +120,33 @@ class ComponentDataRetrieverTest extends TestCase
         $this->assertEquals($response, $this->componentResponse);
     }
 
+    public function testPerformPostWithParameters()
+    {
+        $compDataRetriever = new ComponentDataRetriever($this->config);
+
+        $container = [];
+        $client = $this->mockingRegistryCalls($container);
+        $compDataRetriever->setHttpClient($client);
+
+        $components = [
+            [
+                'name' => 'oc-client',
+                'parameters' => [
+                    'some' => 'param',
+                    'some-other' => 'param'
+                ]
+            ],
+            [
+                'name' => 'other-amazing-component'
+            ]
+        ];
+
+        $response = $compDataRetriever->performPost($components);
+        $this->assertEquals(1, count($container));
+        $request = $container[0]['request'];
+        $this->assertEquals('{"components":[{"name":"oc-client","parameters":{"some":"param","some-other":"param"}},{"name":"other-amazing-component"}]}', (string) $request->getBody());
+    }
+
     private function mockingRegistryCalls(&$container = [])
     {
         $history = Middleware::history($container);

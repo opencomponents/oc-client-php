@@ -81,7 +81,7 @@ class ComponentDataRetriever
     public function performPost(array $components)
     {
         $response = $this->httpClient->post('', [
-            'components' => $components
+            'json' => ['components' => $components]
         ]);
 
         return (string) $response->getBody();
