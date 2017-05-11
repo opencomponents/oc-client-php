@@ -45,8 +45,9 @@ class ComponentDataRetriever
             return $compsArr;
         }
 
+        $mappingUtils = new MappingUtils();
         $response = json_decode($this->performGet(
-            new Component($components[0]['name'])
+            $mappingUtils->arrayToComponent($components[0])
         ));
 
         if ($response) {
