@@ -28,13 +28,36 @@ class Component
         $this->render = $render;
     }
 
+    /**
+     * getName
+     *
+     * @access public
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * getVersion
+     *
+     * @access public
+     * @return string
+     */
     public function getVersion()
     {
         return $this->version;
     }
 
-    public function getName()
+    /**
+     * getParameters
+     *
+     * @access public
+     * @return void
+     */
+    public function getParameters()
     {
-        return $this->name;
+        return $this->parameters;
     }
 }

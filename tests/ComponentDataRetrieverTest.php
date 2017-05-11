@@ -5,12 +5,21 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Middleware;
 
 use OpenComponents\ComponentDataRetriever;
 use OpenComponents\Model\Component;
 
 class ComponentDataRetrieverTest extends TestCase
 {
+    private $config = [
+        "registries" => [
+            "serverRendering" => "https://some-registry.com"
+        ],
+        'components' => [
+            'oc-client'
+        ]
+    ];
 
     private $componentResponse = '{
         "type": "oc-component",
@@ -26,18 +35,10 @@ class ComponentDataRetrieverTest extends TestCase
     // else it should do a POST request
     public function testRequestMethodForOneComp()
     {
-        $oneComp = [
-            "registries" => [
-                "serverRendering" => "https://some-registry.com"
-            ],
-            'components' => [
-                'oc-client'
-            ]
-        ];
         $httpClient = $this->mockingRegistryCalls();
 
         $compDataRetriever = $this->getMockBuilder(ComponentDataRetriever::class)
-            ->setConstructorArgs([$oneComp])
+            ->setConstructorArgs([$this->config])
             ->setMethods(['performGet'])
             ->getMock();
         $compDataRetriever->expects($this->once())
@@ -47,15 +48,8 @@ class ComponentDataRetrieverTest extends TestCase
         $compDataRetriever->performRequest();
 
         // Testing with more than one component
-        $twoComp = [
-            "registries" => [
-                "serverRendering" => "https://some-registry.com"
-            ],
-            'components' => [
-                'oc-client',
-                'some-other-component'
-            ]
-        ];
+        $twoComp = $this->config;
+        $twoComp['components'][] = 'some-other-component';
         $compDataRetrieverTwo = $this->getMockBuilder(ComponentDataRetriever::class)
             ->setConstructorArgs([$twoComp])
             ->setMethods(['performPost'])
@@ -70,53 +64,78 @@ class ComponentDataRetrieverTest extends TestCase
     // Testing GET Request
     public function testPerformGet()
     {
-        $config = [
-            "registries" => [
-                "serverRendering" => "https://some-registry.com"
-            ],
-            'components' => [
-                'oc-client'
-            ]
-        ];
-
-        $compDataRetriever = new ComponentDataRetriever($config);
+        $compDataRetriever = new ComponentDataRetriever($this->config);
 
         // Mocking http client
         $httpClient = $this->mockingRegistryCalls();
         $compDataRetriever->setHttpClient($httpClient);
 
         $response = $compDataRetriever->performGet(
-            new Component($config['components'][0])
+            new Component($this->config['components'][0])
         );
 
         $this->assertEquals($response, $this->componentResponse);
     }
 
+    public function testPerformGetWithParameters()
+    {
+        $compDataRetriever = new ComponentDataRetriever($this->config);
+
+        $container = [];
+        $client = $this->mockingRegistryCalls($container);
+        $compDataRetriever->setHttpClient($client);
+
+        $compDataRetriever->performGet(
+            new Component(
+                $this->config['components'][0],
+                '',
+                [
+                    'test' => 'param',
+                    'deeper' => [
+                        'level' => true
+                    ]
+                ]
+            )
+        );
+
+        $this->assertEquals(1, count($container));
+        $request = $container[0]['request'];
+        $this->assertEquals('oc-client', $request->getUri()->getPath());
+        $this->assertEquals('test=param&deeper%5Blevel%5D=1', $request->getUri()->getQuery());
+    }
+
     // Testing POST Request
     public function testPerformPost()
     {
-        $config = [
-            "registries" => [
-                "serverRendering" => "https://some-registry.com"
-            ],
-            'components' => [
-                'oc-client',
-                'some-other-component'
-            ]
-        ];
-
-        $compDataRetriever = new ComponentDataRetriever($config);
+        $twoComp = $this->config;
+        $twoComp['components'][] = 'some-other-component';
+        $compDataRetriever = new ComponentDataRetriever($twoComp);
 
         // Mocking http client
         $httpClient = $this->mockingRegistryCalls();
         $compDataRetriever->setHttpClient($httpClient);
 
-        $response = $compDataRetriever->performPost($config['components']);
+        $response = $compDataRetriever->performPost($twoComp['components']);
 
         $this->assertEquals($response, $this->componentResponse);
     }
 
-    private function mockingRegistryCalls()
+    private function mockingRegistryCalls(&$container = [])
+    {
+        $history = Middleware::history($container);
+
+        $stack = HandlerStack::create($this->getMockHandler());
+
+        $stack->push($history);
+
+        $client = new GuzzleClient([
+            'handler' => $stack
+        ]);
+
+        return $client;
+    }
+
+    private function getMockHandler()
     {
         $mock = new MockHandler([
             new Response(200, [], $this->componentResponse),
@@ -124,9 +143,6 @@ class ComponentDataRetrieverTest extends TestCase
             new Response(200, [], $this->componentResponse)
         ]);
 
-        $handler = HandlerStack::create($mock);
-        return new GuzzleClient([
-            'handler' => $handler
-        ]);
+        return $mock;
     }
 }

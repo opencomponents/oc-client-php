@@ -65,7 +65,9 @@ class ComponentDataRetriever
      */
     public function performGet(Component $component)
     {
-        $response = $this->httpClient->get($component->getName());
+        $response = $this->httpClient->request('GET', $component->getName(), [
+            'query' => $component->getParameters()
+        ]);
         return (string) $response->getBody();
     }
 
