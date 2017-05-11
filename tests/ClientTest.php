@@ -16,14 +16,11 @@ class ClientTest extends TestCase
     {
         // Testing options initialization
         $client = new Client([
-            "registries" => [
-                "serverRendering" => "https://some-registry.com"
-            ],
-            "components" => [
-                "hello" => '1.2.3',
-                "world" => '~2.2.2',
-                "nover" => ''
-            ]
+            "serverRendering" => "https://some-registry.com"
+        ], [
+            "hello" => '1.2.3',
+            "world" => '~2.2.2',
+            "nover" => ''
         ]);
 
         $this->assertInstanceOf(
@@ -44,7 +41,7 @@ class ClientTest extends TestCase
             ]
         ];
         // Instance initialization
-        $client = new Client($config);
+        $client = new Client($config['registries'], $config['components']);
 
         $client->setComponentDataRetriever(
             $this->mockComponentDataRetriever($config)

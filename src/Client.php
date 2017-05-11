@@ -7,13 +7,21 @@ use OpenComponents\ComponentDataRetriever;
 
 class Client
 {
-    private $config;
-
     private $componentDataRetriever;
 
-    public function __construct($config)
+    /**
+     * __construct
+     *
+     * @param array $registries
+     * @param mixed $components
+     * @param array $cache
+     * @access public
+     * @return void
+     */
+    public function __construct(array $registries, array $components, $cache = null)
     {
-        $this->config = $config;
+        $config['registries'] = $registries;
+        $config['components'] = $components;
 
         $this->setComponentDataRetriever(
             new ComponentDataRetriever($config)
