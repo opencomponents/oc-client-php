@@ -104,6 +104,32 @@ class ComponentDataRetrieverTest extends TestCase
         $this->assertEquals('test=param&deeper%5Blevel%5D=1', $request->getUri()->getQuery());
     }
 
+    public function testPerformGetWithVersion()
+    {
+        $compDataRetriever = new ComponentDataRetriever($this->config);
+
+        $container = [];
+        $client = $this->mockingRegistryCalls($container);
+        $compDataRetriever->setHttpClient($client);
+
+        $compDataRetriever->performGet(
+            new Component(
+                $this->config['components'][0],
+                '0.30',
+                [
+                    'test' => 'param',
+                    'deeper' => [
+                        'level' => true
+                    ]
+                ]
+            )
+        );
+
+        $this->assertEquals(1, count($container));
+        $request = $container[0]['request'];
+        $this->assertEquals('oc-client/0.30', $request->getUri()->getPath());
+    }
+
     // Testing POST Request
     public function testPerformPost()
     {
@@ -141,10 +167,37 @@ class ComponentDataRetrieverTest extends TestCase
             ]
         ];
 
-        $response = $compDataRetriever->performPost($components);
+        $compDataRetriever->performPost($components);
         $this->assertEquals(1, count($container));
         $request = $container[0]['request'];
         $this->assertEquals('{"components":[{"name":"oc-client","parameters":{"some":"param","some-other":"param"}},{"name":"other-amazing-component"}]}', (string) $request->getBody());
+    }
+
+    public function testPostWithVersion()
+    {
+        $compDataRetriever = new ComponentDataRetriever($this->config);
+
+        $container = [];
+        $client = $this->mockingRegistryCalls($container);
+        $compDataRetriever->setHttpClient($client);
+
+        $components = [
+            [
+                'name' => 'oc-client',
+                'version' => '0.30',
+                'parameters' => [
+                    'some' => 'param',
+                    'some-other' => 'param'
+                ]
+            ],
+            [
+                'name' => 'other-amazing-component'
+            ]
+        ];
+        $compDataRetriever->performPost($components);
+        $this->assertEquals(1, count($container));
+        $request = $container[0]['request'];
+        $this->assertEquals('{"components":[{"name":"oc-client","version":"0.30","parameters":{"some":"param","some-other":"param"}},{"name":"other-amazing-component"}]}', (string) $request->getBody());
     }
 
     private function mockingRegistryCalls(&$container = [])
