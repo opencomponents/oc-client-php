@@ -9,8 +9,36 @@ For a nodejs implementation check this [link][oc-client-node]. This library is h
 
 ## Install
 
-```
+```bash
 composer require opencomponents/oc-client-php
+```
+
+## Quickstart
+
+```php
+use OpenComponents\Client;
+
+// Initializing the client
+$client = new Client(array(
+    "serverRendering" => 'https://your-components.repository.com/'
+));
+
+// Render some component
+$components = $client->renderComponents(array(
+    array(
+        'name' => 'your-amazing-widget',
+        'parameters' => array(
+            'param1' => 'hello opencomponents!',
+            'param2' => 'just show me the component'
+        )
+    ),
+    array(
+        'name' => 'one-more-component'
+    )
+));
+
+// Print the rendered component and volià
+echo $components['html'];
 ```
 
 ## Running tests
