@@ -18,7 +18,7 @@ class Client
      * @access public
      * @return void
      */
-    public function __construct(array $registries, array $components, $cache = null)
+    public function __construct(array $registries, array $components = array(), $cache = null)
     {
         $config['registries'] = $registries;
         $config['components'] = $components;
