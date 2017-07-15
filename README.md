@@ -48,7 +48,7 @@ composer test
 ```
 
 [open-components]: https://github.com/opentable/oc
-[oc-client-node]: https://github.com/opentable/oc/tree/master/client
+[oc-client-node]: https://github.com/opencomponents/oc-client-node
 [build status]: https://travis-ci.org/opencomponents/oc-client-php
 [build svg]: https://img.shields.io/travis/opencomponents/oc-client-php/master.svg?style=flat-square
 
