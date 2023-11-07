@@ -70,7 +70,7 @@ class ClientTest extends TestCase
         ]);
 
         $this->assertEquals(2, count($components['html']));
-        $this->assertRegexp('/script/', $components['html'][0]);
+        $this->assertMatchesRegularExpression('/script/', $components['html'][0]);
     }
 
     public function mockComponentDataRetriever($config)
