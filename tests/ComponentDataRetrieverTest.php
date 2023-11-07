@@ -39,7 +39,7 @@ class ComponentDataRetrieverTest extends TestCase
 
         $compDataRetriever = $this->getMockBuilder(ComponentDataRetriever::class)
             ->setConstructorArgs([$this->config])
-            ->setMethods(['performGet'])
+            ->onlyMethods(['performGet'])
             ->getMock();
         $compDataRetriever->expects($this->once())
             ->method('performGet');
@@ -52,7 +52,7 @@ class ComponentDataRetrieverTest extends TestCase
         $twoComp['components'][] = 'some-other-component';
         $compDataRetrieverTwo = $this->getMockBuilder(ComponentDataRetriever::class)
             ->setConstructorArgs([$twoComp])
-            ->setMethods(['performPost'])
+            ->onlyMethods(['performPost'])
             ->getMock();
         $compDataRetrieverTwo->expects($this->once())
             ->method('performPost');
